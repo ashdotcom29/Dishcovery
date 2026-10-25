@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ category }} Recipes | Dishcovery</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <header class="navbar">
+        <a href="/" class="logo">🍃 Dish<span>covery</span></a>
+
+        <nav class="nav-links">
+            <a href="/">Home</a>
+            <a href="/#categories">Categories</a>
+            <a href="/#recipes" class="nav-cta">Explore Recipes</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="content recipe-section">
+
+            <div class="section-header">
+                <div>
+                    <div class="section-label">Find your craving</div>
+                    <h2>{{ category }} Recipes</h2>
+                    <p>
+                        Discover delicious ideas from your
+                        {{ category.lower() }} collection.
+                    </p>
+                </div>
+
+                <div class="recipe-count">
+                    🍃 {{ recipes|length }} recipes found
+                </div>
+            </div>
+
+            <div class="recipe-grid">
+
+                {% for recipe in recipes %}
+                <article class="recipe-card">
+
+                    <div class="recipe-icon">🍽️</div>
+
+                    <h3>
+                        <a href="{{ url_for('recipe_details', recipe_id=recipe.recipe_id) }}"
+                         class="recipe-title-link">
+                        {{ recipe.recipe_name }}
+                        </a>
+                    </h3>
+
+                    <p>
+                        Discover a new meal to add to your kitchen favourites.
+                    </p>
+
+                    <div class="recipe-meta">
+                        <span>
+                            ⏱️ {{ recipe.cooking_time }} minutes
+                        </span>
+
+                        <span>
+                            👩‍🍳 {{ recipe.difficulty }}
+                        </span>
+                    </div>
+
+                </article>
+
+                {% else %}
+                <p class="empty-message">
+                    No recipes found in this category yet.
+                </p>
+                {% endfor %}
+
+            </div>
+
+            <p style="margin-top: 30px;">
+                <a href="/" class="nav-cta">← Back to Home</a>
+            </p>
+
+        </section>
+    </main>
+
+    <footer>
+        <strong>🍃 Dishcovery</strong> —
+        Discover more. Waste less. Cook happily.
+    </footer>
+
+</body>
+</html>

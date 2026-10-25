@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ recipe.recipe_name }} | Dishcovery</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        .details-container {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 0 24px;
+        }
+
+        .details-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 35px;
+            margin-top: 25px;
+        }
+
+        .details-icon {
+            font-size: 55px;
+            margin-bottom: 15px;
+        }
+
+        .details-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 20px 0 30px;
+        }
+
+        .details-meta span {
+            background: var(--sage-light);
+            color: var(--sage-dark);
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .details-card h2 {
+            color: var(--sage-dark);
+            margin: 28px 0 15px;
+        }
+
+        .ingredient-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            list-style: none;
+            padding: 0;
+        }
+
+        .ingredient-list li {
+            background: var(--cream);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 10px 15px;
+        }
+
+        .instructions {
+            line-height: 1.9;
+            white-space: pre-line;
+            color: var(--text);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 25px;
+            color: var(--sage-dark);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        @media (max-width: 560px) {
+            .details-card {
+                padding: 22px;
+            }
+
+            .details-container {
+                margin-top: 30px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="navbar">
+        <a href="/" class="logo">🍃 Dish<span>covery</span></a>
+
+        <nav class="nav-links">
+            <a href="/">Home</a>
+            <a href="/#categories">Categories</a>
+            <a href="/#recipes" class="nav-cta">Explore Recipes</a>
+        </nav>
+    </header>
+
+    <main class="details-container">
+
+        <div class="section-label">YOUR NEXT DELICIOUS MEAL</div>
+
+        <div class="details-card">
+
+            <div class="details-icon">🍽️</div>
+
+            <h1>{{ recipe.recipe_name }}</h1>
+
+            <div class="details-meta">
+                <span>⏱️ {{ recipe.cooking_time }} minutes</span>
+                <span>👩‍🍳 {{ recipe.difficulty }}</span>
+                <span>🥕 {{ ingredients|length }} ingredients</span>
+            </div>
+
+            <h2>🥗 Ingredients</h2>
+
+            <ul class="ingredient-list">
+                {% for ingredient in ingredients %}
+                <li>{{ ingredient.ingredient_name }}</li>
+                {% else %}
+                <li>No ingredients listed yet.</li>
+                {% endfor %}
+            </ul>
+
+            <h2>👩‍🍳 Cooking Instructions</h2>
+
+            <div class="instructions">{{ recipe.instructions }}</div>
+
+            <a href="/" class="back-link">← Back to Dishcovery</a>
+
+        </div>
+
+    </main>
+
+    <footer>
+        <strong>🍃 Dishcovery</strong> —
+        Discover more. Waste less. Cook happily.
+    </footer>
+
+</body>
+</html>

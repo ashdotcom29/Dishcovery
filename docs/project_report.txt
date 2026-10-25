@@ -1,0 +1,33 @@
+DISHCOVERY
+
+A Database-Driven Recipe Recommendation and Ingredient Management System
+
+Tagline: Discover What You Can Cook!
+
+Project Documentation
+
+Technology Stack:
+Python, Flask, MySQL, SQL, HTML and CSS
+
+
+Table created: Categories — stores the available recipe categories.
+Table created: Recipes — stores recipe names, cooking times, difficulty levels, and preparation instructions.
+Table created: Ingredients — stores the unique names and IDs of ingredients used in recipes.
+Table created: Recipe_Ingredients — connects recipes with their ingredients through foreign keys and a composite primary key, implementing a many-to-many relationship.
+Table created: Recipe_Categories — connects recipes with their categories using foreign keys and a composite primary key, implementing a many-to-many relationship.
+
+**Initial Database Structure Completed**
+
+Five tables have been created: Categories, Recipes, Ingredients, Recipe_Ingredients, and Recipe_Categories. Primary keys, foreign keys, composite primary keys, and integrity constraints have been implemented to establish relationships between the tables.
+
+**Initial Data Population:** Six recipe categories have been inserted into the Categories table: Breakfast, Lunch, Dinner, Snacks, Desserts, and Drinks.
+
+**Ingredient Data Population:** The Ingredients table include 60 ingredients, covering vegetables, fruits, dairy products, spices, grains, legumes, and other commonly used cooking ingredients. This provides a broader foundation for ingredient-based recipe recommendations.
+
+**Recipe Data Population:** 63 initial recipes have been inserted into the Recipes table, including breakfast dishes, snacks, beverages, and main-course options. Each recipe includes a cooking time, difficulty level, and preparation instructions.
+
+**Data Cleaning and Validation:** Duplicate recipe records were identified using SQL aggregate functions and removed while retaining one record per recipe name. Before deletion, a backup table named `Recipes_Backup` was created to preserve the original data. The cleanup was verified by confirming that the total recipe count and the number of unique recipe names both equal 63.
+
+**Relationship Implementation:** The Aloo Sandwich recipe has been linked to its ingredients through the Recipe_Ingredients table and categorized under Snacks through the Recipe_Categories table.
+
+

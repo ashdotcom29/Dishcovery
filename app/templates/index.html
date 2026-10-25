@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dishcovery | Discover Something Delicious</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <header class="navbar">
+        <a href="/" class="logo">🍃 Dish<span>covery</span></a>
+
+        <nav class="nav-links">
+            <a href="/">Home</a>
+            <a href="#categories">Categories</a>
+            <a href="#recipes" class="nav-cta">Explore Recipes</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-inner">
+
+                <div class="eyebrow">
+                    🌱 Less waste, more wonderful meals
+                </div>
+
+                <h1>
+                    What's in your kitchen <span>today?</span>
+                </h1>
+
+                <p class="hero-description">
+                    Turn the ingredients you already have into something
+                    delicious. Find your next favourite meal with Dishcovery.
+                </p>
+
+                <form class="finder" id="ingredientForm">
+                    <label for="ingredientInput">
+                        🥕 What ingredients do you have?
+                    </label>
+
+                    <div class="search-row">
+                        <input
+                            type="text"
+                            id="ingredientInput"
+                            placeholder="e.g. potatoes, tomatoes, rice..."
+                            autocomplete="off"
+                        >
+
+                        <button type="submit" class="search-button">
+                            Find Recipes →
+                        </button>
+                    </div>
+
+                    <p class="finder-hint">
+    Choose ingredients you already have:
+</p>
+
+<div class="ingredient-selector"><div class="ingredient-selector">
+
+    <!-- Button to open the ingredient picker -->
+    <button type="button" id="openIngredientPicker" class="open-ingredient-picker">
+        ＋ Choose Ingredients
+    </button>
+
+    <span class="selected-count-label">
+        <span id="selectedIngredientCount">0</span> ingredients selected
+    </span>
+
+    <!-- Selected ingredients stay visible on the homepage -->
+    <div id="selectedIngredients" class="selected-ingredients">
+        <span class="selection-placeholder">
+            No ingredients selected yet.
+        </span>
+    </div>
+
+    <button type="button" id="clearIngredients" class="clear-ingredients">
+        Clear All
+    </button>
+
+    <!-- Ingredient selection popup -->
+    <dialog id="ingredientDialog" class="ingredient-dialog">
+
+        <div class="ingredient-dialog-header">
+            <div>
+                <h2>Choose your ingredients 🥑</h2>
+                <p>Select everything you already have in your kitchen.</p>
+            </div>
+
+            <button
+                type="button"
+                id="closeIngredientPicker"
+                class="close-ingredient-picker"
+                aria-label="Close ingredient picker">
+                &times;
+            </button>
+        </div>
+
+        <!-- Search ingredients -->
+        <div class="ingredient-search">
+            <input
+                type="text"
+                id="ingredientSearch"
+                placeholder="🔍 Search ingredients..."
+                autocomplete="off"
+            >
+        </div>
+
+        <!-- Scrollable ingredient list -->
+        <div class="ingredient-chip-container" id="ingredientChipContainer">
+
+            {% for ingredient in ingredients %}
+            <button
+                type="button"
+                class="ingredient-chip"
+                data-ingredient="{{ ingredient.ingredient_name }}">
+                {{ ingredient.ingredient_name }}
+            </button>
+            {% endfor %}
+
+        </div>
+
+        <!-- Popup footer -->
+        <div class="ingredient-dialog-footer">
+            <span>
+                <span id="dialogIngredientCount">0</span> selected
+            </span>
+
+            <button
+                type="button"
+                id="applyIngredientSelection"
+                class="apply-ingredients">
+                Done ✓
+            </button>
+        </div>
+
+    </dialog>
+
+</div>
+
+                    <p
+                        id="selectionMessage"
+                        class="finder-hint"
+                        aria-live="polite">
+                        Select ingredients to get started.
+                    </p>
+                </form>
+
+            </div>
+        </section>
+
+        <section class="content" id="categories">
+            <div class="section-header">
+                <div>
+                    <div class="section-label">Find your craving</div>
+                    <h2>Explore by category</h2>
+                    <p>Something for every mood and every meal.</p>
+                </div>
+            </div>
+
+            <div class="categories">
+
+                <a href="/category/Breakfast" class="category-card">
+                    <span class="category-icon">🍳</span>
+                    <span>Breakfast</span>
+                </a>
+
+                <a href="/category/Lunch" class="category-card">
+                    <span class="category-icon">🍛</span>
+                    <span>Lunch</span>
+                </a>
+
+                <a href="/category/Dinner" class="category-card">
+                    <span class="category-icon">🍲</span>
+                    <span>Dinner</span>
+                </a>
+
+                <a href="/category/Snacks" class="category-card">
+                    <span class="category-icon">🥪</span>
+                    <span>Snacks</span>
+                </a>
+
+                <a href="/category/Desserts" class="category-card">
+                    <span class="category-icon">🍰</span>
+                    <span>Desserts</span>
+                </a>
+
+                <a href="/category/Drinks" class="category-card">
+                    <span class="category-icon">🥤</span>
+                    <span>Drinks</span>
+                </a>
+
+            </div>
+        </section>
+
+        <section class="content recipe-section" id="recipes">
+            <div class="section-header">
+                <div>
+                    <div class="section-label">A little inspiration</div>
+                    <h2>Discover something delicious</h2>
+                    <p>A preview from the Dishcovery recipe collection.</p>
+                </div>
+
+                <div class="recipe-count">
+                    🍃 {{ recipe_count }} recipes in our collection
+                </div>
+            </div>
+
+        <!-- Recipe Sorting Dropdown -->
+            <div class="sorting-bar">
+                <label for="recipeSort">Sort recipes by:</label>
+
+                <select id="recipeSort">
+                    <option value="default">Recommended</option>
+                    <option value="time">Quickest First</option>
+                    <option value="available">Most Ingredients Available</option>
+                    <option value="missing">Fewest Missing Ingredients</option>
+                </select>
+            </div>
+
+
+
+            <div class="recipe-grid">
+                {% for recipe in recipes[:6] %}
+                <article class="recipe-card">
+                    <div class="recipe-icon">🍽️</div>
+
+                    <h3>
+                        <a href="{{ url_for('recipe_details', recipe_id=recipe.recipe_id) }}"
+                            class="recipe-title-link">
+                            {{ recipe.recipe_name }}
+                        </a>
+                    </h3>
+
+                    <p>
+                        Discover a new meal to add to your kitchen favourites.
+                    </p>
+
+                    <div class="recipe-meta">
+                        <span>
+                            ⏱️ {{ recipe.cooking_time }} minutes
+                        </span>
+
+                        <span>
+                            👩‍🍳 {{ recipe.difficulty }}
+                        </span>
+                    </div>
+                </article>
+
+                {% else %}
+                <p class="empty-message">
+                    No recipes found. Add recipes to your database to see them here.
+                </p>
+                {% endfor %}
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <strong>🍃 Dishcovery</strong> —
+        Discover more. Waste less. Cook happily.
+    </footer>
+
+    <script>
+    const ingredientInput = document.getElementById("ingredientInput");
+    const ingredientForm = document.getElementById("ingredientForm");
+    const selectionMessage = document.getElementById("selectionMessage");
+    const ingredientButtons = document.querySelectorAll(".ingredient-chip");
+    const recipeGrid = document.querySelector(".recipe-grid");
+
+    const selectedIngredients = new Set();
+
+// Ingredient picker popup elements
+    const ingredientDialog = document.getElementById("ingredientDialog");
+    const openIngredientPicker = document.getElementById("openIngredientPicker");
+    const closeIngredientPicker = document.getElementById("closeIngredientPicker");
+    const applyIngredientSelection = document.getElementById("applyIngredientSelection");
+    const ingredientSearch = document.getElementById("ingredientSearch");
+    const selectedIngredientsContainer = document.getElementById("selectedIngredients");
+    const selectedIngredientCount = document.getElementById("selectedIngredientCount");
+    const dialogIngredientCount = document.getElementById("dialogIngredientCount");
+    const clearIngredientsButton = document.getElementById("clearIngredients");
+
+    // Open and close the popup
+    openIngredientPicker.addEventListener("click", function () {
+        ingredientDialog.showModal();
+    });
+
+    closeIngredientPicker.addEventListener("click", function () {
+        ingredientDialog.close();
+    });
+
+    applyIngredientSelection.addEventListener("click", function () {
+        ingredientDialog.close();
+    });
+
+    // Search and filter ingredients inside the popup
+    ingredientSearch.addEventListener("input", function () {
+        const searchText = ingredientSearch.value.toLowerCase().trim();
+
+        ingredientButtons.forEach(function (button) {
+            const ingredientName = button.dataset.ingredient.toLowerCase();
+
+            button.style.display = ingredientName.includes(searchText)
+                ? ""
+                : "none";
+        });
+    });
+
+// Update the selected ingredients shown on the homepage
+function updateSelectedIngredientsDisplay() {
+    selectedIngredientsContainer.replaceChildren();
+
+    selectedIngredientCount.textContent = selectedIngredients.size;
+    dialogIngredientCount.textContent = selectedIngredients.size;
+
+    if (selectedIngredients.size === 0) {
+        const placeholder = document.createElement("span");
+        placeholder.className = "selection-placeholder";
+        placeholder.textContent = "No ingredients selected yet.";
+        selectedIngredientsContainer.appendChild(placeholder);
+        return;
+    }
+
+    selectedIngredients.forEach(function (ingredient) {
+        const chip = document.createElement("span");
+        chip.className = "selected-ingredient-chip";
+        chip.textContent = ingredient;
+
+        const removeButton = document.createElement("button");
+        removeButton.type = "button";
+        removeButton.textContent = "×";
+        removeButton.setAttribute("aria-label", "Remove " + ingredient);
+
+        removeButton.addEventListener("click", function () {
+            selectedIngredients.delete(ingredient);
+
+            ingredientButtons.forEach(function (button) {
+                if (button.dataset.ingredient.toLowerCase() === ingredient) {
+                    button.classList.remove("selected");
+                }
+            });
+
+            updateSelectedIngredientsDisplay();
+            updateSelectionMessage();
+        });
+
+        chip.appendChild(removeButton);
+        selectedIngredientsContainer.appendChild(chip);
+    });
+}
+
+// Clear all selected ingredients
+clearIngredientsButton.addEventListener("click", function () {
+    selectedIngredients.clear();
+
+    ingredientButtons.forEach(function (button) {
+        button.classList.remove("selected");
+    });
+
+    updateSelectedIngredientsDisplay();
+    updateSelectionMessage();
+});
+
+// Initialize the ingredient selection display
+updateSelectedIngredientsDisplay();
+updateSelectionMessage();
+
+
+// Select or deselect ingredients in the popup
+ingredientButtons.forEach(function (button) {
+    button.addEventListener("click", function () {
+        const ingredient = button.dataset.ingredient.toLowerCase();
+
+        if (selectedIngredients.has(ingredient)) {
+            selectedIngredients.delete(ingredient);
+            button.classList.remove("selected");
+        } else {
+            selectedIngredients.add(ingredient);
+            button.classList.add("selected");
+        }
+
+        updateSelectionMessage();
+        updateSelectedIngredientsDisplay();
+    });
+});
+
+
+    // Update the selected ingredients message
+    function updateSelectionMessage() {
+        if (selectedIngredients.size === 0) {
+            selectionMessage.textContent =
+                "Select ingredients to get started.";
+        } else {
+            selectionMessage.textContent =
+                selectedIngredients.size +
+                " ingredient(s) selected: " +
+                Array.from(selectedIngredients).join(", ");
+        }
+    }
+
+    // Create a recipe card safely
+    function createRecipeCard(recipe) {
+    const card = document.createElement("article");
+    card.className = "recipe-card";
+
+    const matched = Number(recipe.matched_count);
+    const total = Number(recipe.total_ingredients);
+    const missing = Number(recipe.missing_count);
+
+    // Recipe icon
+    const icon = document.createElement("div");
+    icon.className = "recipe-icon";
+    icon.textContent = "🍽️";
+
+    // Recipe name
+    const title = document.createElement("h3");
+    title.textContent = recipe.recipe_name;
+
+    // Recipe readiness status
+    const status = document.createElement("div");
+    status.className = "recipe-status";
+
+    if (missing === 0) {
+        status.textContent = "🟢 Ready to cook!";
+        status.classList.add("ready");
+    } else if (missing <= 2) {
+        status.textContent = "🟡 Almost there!";
+        status.classList.add("almost-ready");
+    } else {
+        status.textContent = "🛒 More ingredients needed";
+        status.classList.add("needs-ingredients");
+    }
+
+    // Ingredient availability
+    const description = document.createElement("p");
+    description.textContent =
+        "You have " + matched + " of " + total +
+        " required ingredients.";
+
+    // Cooking time and difficulty
+    const meta = document.createElement("div");
+    meta.className = "recipe-meta";
+
+    const time = document.createElement("span");
+    time.textContent = "⏱️ " + recipe.cooking_time + " minutes";
+
+    const difficulty = document.createElement("span");
+    difficulty.textContent = "👩‍🍳 " + recipe.difficulty;
+
+    meta.append(time, difficulty);
+
+    // List missing ingredients
+    card.append(icon, title, status, description, meta);
+
+    if (missing > 0 && recipe.missing_ingredients) {
+        const missingList = document.createElement("p");
+        missingList.className = "missing-ingredients";
+        missingList.textContent =
+            "Still needed (" + missing + "): " +
+            recipe.missing_ingredients;
+
+        card.appendChild(missingList);
+    }
+
+    return card;
+}
+
+
+// Sort and display recipe search results
+function displaySortedRecipes() {
+    const recipes = [...(window.currentRecipes || [])];
+    const sortOption = document.getElementById("recipeSort").value;
+
+    if (sortOption === "time") {
+        // Shortest cooking time first
+        recipes.sort((a, b) =>
+            Number(a.cooking_time) - Number(b.cooking_time)
+        );
+
+    } else if (sortOption === "available") {
+        // Most available ingredients first
+        recipes.sort((a, b) =>
+            Number(b.matched_count) - Number(a.matched_count)
+        );
+
+    } else if (sortOption === "missing") {
+        // Fewest missing ingredients first
+        recipes.sort((a, b) =>
+            Number(a.missing_count) - Number(b.missing_count)
+        );
+    }
+
+    const recipeGrid = document.querySelector("#recipes .recipe-grid");
+    recipeGrid.innerHTML = "";
+
+    recipes.forEach(function (recipe) {
+        recipeGrid.appendChild(createRecipeCard(recipe));
+    });
+}
+
+// Update recipe order whenever the sorting option changes
+document.getElementById("recipeSort").addEventListener("change", function () {
+    displaySortedRecipes();
+});
+
+
+    // Search the database when the form is submitted
+    ingredientForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        const typedIngredients = ingredientInput.value
+            .split(",")
+            .map(function (item) {
+                return item.trim().toLowerCase();
+            })
+            .filter(Boolean);
+
+        typedIngredients.forEach(function (ingredient) {
+            selectedIngredients.add(ingredient);
+        });
+
+        if (selectedIngredients.size === 0) {
+            selectionMessage.textContent =
+                "Please select or enter at least one ingredient.";
+            return;
+        }
+
+        selectionMessage.textContent =
+            "Searching your kitchen ingredients...";
+
+        recipeGrid.replaceChildren();
+
+        const loadingMessage = document.createElement("p");
+        loadingMessage.className = "empty-message";
+        loadingMessage.textContent = "Finding your recipes...";
+        recipeGrid.appendChild(loadingMessage);
+
+        try {
+            const response = await fetch("/find-recipes", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    ingredients: Array.from(selectedIngredients)
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    data.error || "Something went wrong."
+                );
+            }
+
+            recipeGrid.replaceChildren();
+
+            if (data.recipes.length === 0) {
+                const message = document.createElement("p");
+                message.className = "empty-message";
+                message.textContent =
+                    "No matching recipes found. Try different ingredients!";
+                recipeGrid.appendChild(message);
+            }
+            else {
+            // Store the original search results for sorting
+            window.currentRecipes = data.recipes;
+
+            displaySortedRecipes();
+        }
+
+            selectionMessage.textContent =
+                "Found " + data.recipes.length +
+                " matching recipe(s) for your ingredients.";
+
+            // Automatically bring the recipe results into view
+            document.getElementById("recipes").scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+            });
+
+            ingredientInput.value = "";
+
+        } catch (error) {
+            recipeGrid.replaceChildren();
+
+            const message = document.createElement("p");
+            message.className = "empty-message";
+            message.textContent =
+                "We couldn't search recipes. Please check that the app " +
+                "and database are running, then try again.";
+
+            recipeGrid.appendChild(message);
+
+            selectionMessage.textContent =
+                "Recipe search failed. Please try again.";
+
+            console.error("Recipe search error:", error);
+        }
+    });
+</script>
+
+</body>
+</html>
