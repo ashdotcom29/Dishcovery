@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Recipe | Dishcovery</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<main class="add-recipe-container">
+    <h1>➕ Add Your Recipe</h1>
+    <p>Share a delicious recipe with Dishcovery!</p>
+
+    <form id="addRecipeForm" method="POST" action="/add-recipe">
+
+        <label for="recipe_name">Recipe Name</label>
+        <input type="text" id="recipe_name" name="recipe_name"
+               placeholder="e.g. Vegetable Sandwich" required>
+
+        <label for="cooking_time">Cooking Time (minutes)</label>
+        <input type="number" id="cooking_time" name="cooking_time"
+               min="1" placeholder="e.g. 20" required>
+
+        <label for="difficulty">Difficulty</label>
+        <select id="difficulty" name="difficulty" required>
+            <option value="">Select difficulty</option>
+            <option value="Easy">Easy</option>
+            <option value="Medium">Medium</option>
+            <option value="Hard">Hard</option>
+        </select>
+
+        <label for="category">Category</label>
+        <select id="category" name="category" required>
+            <option value="">Select category</option>
+            {% for category in categories %}
+            <option value="{{ category.category_id }}">
+                {{ category.category_name }}
+            </option>
+            {% endfor %}
+        </select>
+
+        <label>Ingredients</label>
+        <p>Select all the ingredients required for your recipe.</p>
+
+        <div class="add-recipe-ingredients">
+            {% for ingredient in ingredients %}
+            <label class="add-recipe-ingredient">
+                <input type="checkbox" name="ingredients"
+                       value="{{ ingredient.ingredient_id }}">
+                {{ ingredient.ingredient_name }}
+            </label>
+            {% endfor %}
+        </div>
+
+        <label for="instructions">Cooking Instructions</label>
+        <textarea id="instructions" name="instructions" rows="6"
+                  placeholder="Write the preparation steps..." required></textarea>
+
+        <button type="submit">Save Recipe</button>
+    </form>
+
+    <a href="/">← Back to Home</a>
+</main>
+
+
+</body>
+</html>

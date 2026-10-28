@@ -1,0 +1,80 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Recipes | Dishcovery</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #fffaf5;
+            margin: 0;
+            padding: 30px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+        }
+
+        h1 {
+            color: #b85c38;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #b85c38;
+            text-decoration: none;
+        }
+
+        .recipe-card {
+            background: white;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .recipe-card h2 {
+            margin-top: 0;
+        }
+
+        .empty-message {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a class="back-link" href="/">← Back to Dishcovery</a>
+
+        <h1>My Recipes 🍲</h1>
+        <p>All the recipes added to Dishcovery through the Add Recipe form.</p>
+
+        {% if recipes %}
+            {% for recipe in recipes %}
+                <div class="recipe-card">
+                    <h2>{{ recipe.recipe_name }}</h2>
+                    <p><strong>Cooking time:</strong>
+                        {{ recipe.cooking_time }} minutes</p>
+                    <p><strong>Difficulty:</strong>
+                        {{ recipe.difficulty }}</p>
+                    <a href="/recipe/{{ recipe.recipe_id }}">View Recipe</a>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-message">
+                <p>You haven't added any recipes yet.</p>
+                <p>Head back to Dishcovery and share your first recipe!</p>
+                <a href="/">Add your first recipe</a>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
+

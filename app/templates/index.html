@@ -12,15 +12,19 @@
 
 <body>
 
-    <header class="navbar">
-        <a href="/" class="logo">🍃 Dish<span>covery</span></a>
+    
+<header class="navbar">
+    <a href="/" class="logo">🍃 Dish<span>covery</span></a>
 
-        <nav class="nav-links">
-            <a href="/">Home</a>
-            <a href="#categories">Categories</a>
-            <a href="#recipes" class="nav-cta">Explore Recipes</a>
-        </nav>
-    </header>
+    <nav class="nav-links">
+        <a href="/">Home</a>
+        <a href="#categories">Categories</a>
+        <a href="#recipes" class="nav-cta">Explore Recipes</a>
+        <a href="#" id="openAddRecipe">➕ Add Recipe</a>
+        <a href="/my-recipes">📖 My Recipes</a>
+    </nav>
+</header>
+
 
     <main>
         <section class="hero">
@@ -261,12 +265,220 @@
         </section>
     </main>
 
+
+<!-- Add Recipe Popup -->
+<dialog id="addRecipeDialog" class="ingredient-dialog add-recipe-dialog">
+
+    <div class="ingredient-dialog-header">
+        <div>
+            <h2>Share Your Recipe 🍲</h2>
+            <p>Add something delicious to Dishcovery!</p>
+        </div>
+
+        <button
+            type="button"
+            id="closeAddRecipe"
+            class="close-ingredient-picker"
+            aria-label="Close add recipe form">
+            &times;
+        </button>
+    </div>
+
+    <form id="addRecipeForm" method="POST" action="/add-recipe">
+
+        <label for="recipe_name">Recipe Name</label>
+        <input
+            type="text"
+            id="recipe_name"
+            name="recipe_name"
+            placeholder="e.g. Vegetable Sandwich"
+            required>
+
+        <label for="cooking_time">Cooking Time (minutes)</label>
+        <input
+            type="number"
+            id="cooking_time"
+            name="cooking_time"
+            min="1"
+            placeholder="e.g. 20"
+            required>
+
+        <label for="difficulty">Difficulty</label>
+        <select id="difficulty" name="difficulty" required>
+            <option value="">Select difficulty</option>
+            <option value="Easy">Easy</option>
+            <option value="Medium">Medium</option>
+            <option value="Hard">Hard</option>
+        </select>
+
+        <label for="category">Category</label>
+        <select id="category" name="category" required>
+            <option value="">Select category</option>
+            {% for category in categories %}
+            <option value="{{ category.category_id }}">
+                {{ category.category_name }}
+            </option>
+            {% endfor %}
+        </select>
+
+        <label>Ingredients</label>
+
+<button type="button" id="openIngredientPopup" class="select-ingredients-btn">
+    🥕 Select Ingredients
+</button>
+
+<div id="selectedIngredientsSummary" class="selected-ingredients-summary">
+    No ingredients selected yet.
+</div>
+
+<input type="hidden" name="ingredients" id="selectedIngredientIds">
+
+        <label for="instructions">Cooking Instructions</label>
+        <textarea
+            id="instructions"
+            name="instructions"
+            rows="5"
+            placeholder="Write the preparation steps..."
+            required></textarea>
+
+        <button type="submit">Save Recipe ✓</button>
+
+    </form>
+</dialog>
+
+
+<!-- Select Ingredients Popup -->
+<dialog id="ingredientSelectionDialog" class="ingredient-dialog add-recipe-dialog">
+
+    <div class="ingredient-dialog-header">
+        <div>
+            <h2>Choose Ingredients 🥕</h2>
+            <p>Select everything you have or need for your recipe.</p>
+        </div>
+
+        <button type="button" id="closeIngredientSelection"
+                class="close-ingredient-picker"
+                aria-label="Close ingredient selector">
+            &times;
+        </button>
+    </div>
+
+    <div class="ingredient-selection-content">
+
+        <input
+            type="search"
+            id="recipeIngredientSearch"
+            placeholder="Search ingredients..."
+            aria-label="Search ingredients"
+        >
+
+        <div id="recipeIngredientList" class="add-recipe-ingredients">
+            {% for ingredient in ingredients %}
+            <label class="add-recipe-ingredient"
+                   data-ingredient-name="{{ ingredient.ingredient_name | lower }}">
+                <input
+                    type="checkbox"
+                    class="recipe-ingredient-checkbox"
+                    value="{{ ingredient.ingredient_id }}"
+                    data-name="{{ ingredient.ingredient_name }}"
+                >
+                {{ ingredient.ingredient_name }}
+            </label>
+            {% endfor %}
+        </div>
+
+        <div class="ingredient-popup-footer">
+            <button type="button" id="openNewIngredientPopup"
+                    class="select-ingredients-btn">
+                ＋ Add New Ingredient
+            </button>
+
+            <button type="button" id="confirmIngredientSelection"
+                    class="confirm-ingredients-btn">
+                Confirm Selection ✓
+            </button>
+        </div>
+
+    </div>
+</dialog>
+
+
+<!-- Add New Ingredient Popup -->
+<dialog id="newIngredientDialog" class="ingredient-dialog new-ingredient-dialog">
+
+    <div class="ingredient-dialog-header">
+        <div>
+            <h2>Add an Ingredient 🥕</h2>
+            <p>Can't find what you need? Add it to Dishcovery!</p>
+        </div>
+
+        <button type="button"
+                id="closeNewIngredientPopup"
+                class="close-ingredient-picker"
+                aria-label="Close">
+            &times;
+        </button>
+    </div>
+
+    <form id="newIngredientForm">
+        <label for="newIngredientName">Ingredient Name</label>
+
+        <input
+            type="text"
+            id="newIngredientName"
+            name="ingredient_name"
+            placeholder="e.g. Tofu"
+            maxlength="100"
+            required
+        >
+
+        <p id="newIngredientMessage" role="status"></p>
+
+        <button type="submit" id="saveNewIngredient">
+            Add Ingredient ✓
+        </button>
+    </form>
+
+</dialog>
+
+
+
+
+
+
+
+
     <footer>
         <strong>🍃 Dishcovery</strong> —
         Discover more. Waste less. Cook happily.
     </footer>
 
     <script>
+
+    
+    // Add Recipe popup controls
+    const addRecipeDialog = document.getElementById("addRecipeDialog");
+    const openAddRecipe = document.getElementById("openAddRecipe");
+    const closeAddRecipe = document.getElementById("closeAddRecipe");
+
+    openAddRecipe.addEventListener("click", function (event) {
+        event.preventDefault();
+        addRecipeDialog.showModal();
+    });
+
+    closeAddRecipe.addEventListener("click", function () {
+        addRecipeDialog.close();
+    });
+
+    // Close when clicking the dark overlay
+    addRecipeDialog.addEventListener("click", function (event) {
+        if (event.target === addRecipeDialog) {
+            addRecipeDialog.close();
+        }
+    });
+
+
+
     const ingredientInput = document.getElementById("ingredientInput");
     const ingredientForm = document.getElementById("ingredientForm");
     const selectionMessage = document.getElementById("selectionMessage");
@@ -418,8 +630,10 @@ ingredientButtons.forEach(function (button) {
     icon.className = "recipe-icon";
     icon.textContent = "🍽️";
 
-    // Recipe name
-    const title = document.createElement("h3");
+    // Clickable recipe name
+    const title = document.createElement("a");
+    title.className = "recipe-title-link";
+    title.href = "/recipe/" + recipe.recipe_id;
     title.textContent = recipe.recipe_name;
 
     // Recipe readiness status
@@ -605,6 +819,205 @@ document.getElementById("recipeSort").addEventListener("change", function () {
             console.error("Recipe search error:", error);
         }
     });
+
+
+
+    // ========================================
+    // DISHCOVERY: INGREDIENT POPUP CONTROLS
+    // ========================================
+
+    const ingredientSelectionDialog =
+        document.getElementById("ingredientSelectionDialog");
+
+    const newIngredientDialog =
+        document.getElementById("newIngredientDialog");
+
+    const openIngredientPopup =
+        document.getElementById("openIngredientPopup");
+
+    const closeIngredientSelection =
+        document.getElementById("closeIngredientSelection");
+
+    const openNewIngredientPopup =
+        document.getElementById("openNewIngredientPopup");
+
+    const closeNewIngredientPopup =
+        document.getElementById("closeNewIngredientPopup");
+
+    const confirmIngredientSelection =
+        document.getElementById("confirmIngredientSelection");
+
+    const selectedIngredientIds =
+        document.getElementById("selectedIngredientIds");
+
+    const selectedIngredientsSummary =
+        document.getElementById("selectedIngredientsSummary");
+
+    const recipeIngredientSearch =
+        document.getElementById("recipeIngredientSearch");
+
+
+    // Open the ingredient selection popup
+    openIngredientPopup.addEventListener("click", function () {
+        ingredientSelectionDialog.showModal();
+    });
+
+
+    // Close the ingredient selection popup
+    closeIngredientSelection.addEventListener("click", function () {
+        ingredientSelectionDialog.close();
+    });
+
+
+    // Open the add-new-ingredient popup
+    openNewIngredientPopup.addEventListener("click", function () {
+        newIngredientDialog.showModal();
+    });
+
+
+    // Close the add-new-ingredient popup
+    closeNewIngredientPopup.addEventListener("click", function () {
+        newIngredientDialog.close();
+    });
+
+
+    // Search existing ingredients
+    recipeIngredientSearch.addEventListener("input", function () {
+        const searchText = this.value.trim().toLowerCase();
+
+        document.querySelectorAll(
+            "#recipeIngredientList .add-recipe-ingredient"
+        ).forEach(function (item) {
+            const ingredientName =
+                item.dataset.ingredientName || "";
+
+            item.style.display = ingredientName.includes(searchText)
+                ? "flex"
+                : "none";
+        });
+    });
+
+
+    // Confirm ingredient selection
+    confirmIngredientSelection.addEventListener("click", function () {
+        const checkedIngredients = document.querySelectorAll(
+            ".recipe-ingredient-checkbox:checked"
+        );
+
+        const ids = [];
+        const names = [];
+
+        checkedIngredients.forEach(function (checkbox) {
+            ids.push(checkbox.value);
+            names.push(checkbox.dataset.name);
+        });
+
+        selectedIngredientIds.value = ids.join(",");
+
+        selectedIngredientsSummary.textContent = names.length
+            ? names.join(", ")
+            : "No ingredients selected yet.";
+
+        ingredientSelectionDialog.close();
+    });
+
+
+    // ========================================
+    // SAVE A NEW INGREDIENT
+    // ========================================
+
+    const newIngredientForm = document.getElementById("newIngredientForm");
+    const newIngredientName = document.getElementById("newIngredientName");
+    const newIngredientMessage = document.getElementById("newIngredientMessage");
+
+    newIngredientForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        const ingredientName = newIngredientName.value.trim();
+
+        if (!ingredientName) {
+            newIngredientMessage.textContent = "Please enter an ingredient name.";
+            return;
+        }
+
+        const saveButton = document.getElementById("saveNewIngredient");
+        saveButton.disabled = true;
+        saveButton.textContent = "Saving...";
+
+        try {
+            const response = await fetch("/add-ingredient", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    ingredient_name: ingredientName
+                })
+            });
+
+            const result = await response.json();
+
+            if (!response.ok || !result.success) {
+                throw new Error(result.message || "Unable to add ingredient.");
+            }
+
+            // Check whether this ingredient is already in the selector.
+            let checkbox = document.querySelector(
+                `.recipe-ingredient-checkbox[value="${result.ingredient_id}"]`
+            );
+
+            if (!checkbox) {
+                const label = document.createElement("label");
+                label.className = "add-recipe-ingredient";
+                label.dataset.ingredientName =
+                    result.ingredient_name.toLowerCase();
+
+                checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                checkbox.className = "recipe-ingredient-checkbox";
+                checkbox.value = result.ingredient_id;
+                checkbox.dataset.name = result.ingredient_name;
+
+                label.appendChild(checkbox);
+                label.appendChild(
+                    document.createTextNode(" " + result.ingredient_name)
+                );
+
+                document.getElementById("recipeIngredientList").appendChild(label);
+            }
+
+            // Automatically select the new or existing ingredient.
+            checkbox.checked = true;
+
+            // Clear the search so the ingredient is visible.
+            recipeIngredientSearch.value = "";
+
+            document.querySelectorAll(
+                "#recipeIngredientList .add-recipe-ingredient"
+            ).forEach(function (item) {
+                item.style.display = "flex";
+            });
+
+            newIngredientMessage.textContent = result.message;
+            newIngredientName.value = "";
+
+            // Close the smaller popup and return to ingredient selection.
+            newIngredientDialog.close();
+
+        } catch (error) {
+            newIngredientMessage.textContent =
+                error.message || "Something went wrong. Please try again.";
+        } finally {
+            saveButton.disabled = false;
+            saveButton.textContent = "Add Ingredient ✓";
+        }
+    });
+
+
+
+
+    
+   
 </script>
 
 </body>
